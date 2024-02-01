@@ -8,3 +8,4 @@ function main() {
     appHTML.appendChild(hElement);
   }
 }
+main();
