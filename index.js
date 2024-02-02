@@ -1,16 +1,12 @@
 function main() {
-  const loginButton = document.createElement("button");
-  loginButton.addEventListener("click", () => {
-    window.location.assign(
-      new URL(
-        "https://api.instagram.com/oauth/authorize?client_id=396942749405934&redirect_uri=https://gabinpoa.github.io/dummyPage/&scope=user_profile,openid&response_type=code",
-      ),
-    );
-  });
-  loginButton.innerText = "Login";
-  loginButton.type = "button";
+  const loginLink = document.createElement("a");
+  const url = new URL(
+    "https://api.instagram.com/oauth/authorize?client_id=396942749405934&redirect_uri=https://gabinpoa.github.io/dummyPage/static/index.html&scope=user_profile,openid&response_type=code",
+  );
+  loginLink.innerText = "Login";
+  loginLink.href = url.toString();
 
   const app = document.getElementById("app");
-  app.appendChild(loginButton);
+  app.appendChild(loginLink);
 }
 main();
