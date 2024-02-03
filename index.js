@@ -5,12 +5,12 @@ function appendToApp(element) {
 function getATagElement(url) {
   const loginLink = document.createElement("a");
   loginLink.innerText = "Login";
-  loginLink.href = url.toString();
+  loginLink.href = url;
   return loginLink;
 }
 
 function getUrl({ client_id, redirect_uri, scope }) {
-  return new URL(
+  return encodeURI(
     `https://api.instagram.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=${scope}&response_type=code`,
   );
 }
