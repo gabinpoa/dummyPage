@@ -21,8 +21,7 @@ function main() {
     const options = {
       client_id: document.getElementById("client_id").value,
       redirect_uri: "https://gabinpoa.github.io/dummyPage/static/index.html",
-      scope:
-        "user_profile,instagram_basic,pages_read_engagement,pages_show_list",
+      scope: "user_profile",
     };
 
     const url = getUrl(options);
