@@ -1,13 +1,13 @@
 function main() {
   const myURLParams = new URL(window.location.toString()).searchParams;
   const code = myURLParams.get("code");
+  const appHTML = document.getElementById("app");
+  const h1 = document.createElement("h1");
   if (code !== null) {
-    console.log("has");
-    const appHTML = document.getElementById("app");
-    const hElement = document.createElement("h1");
-    hElement.innerText = code;
-    appHTML.appendChild(hElement);
+    h1.innerText = code;
+  } else {
+    h1.innerText = "could not get the code parameter";
   }
-  console.log("it runned");
+  appHTML.appendChild(h1);
 }
 main();
