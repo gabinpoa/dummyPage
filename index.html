@@ -6,7 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <form id="clientidform">
+        <label for="client_id">Client Id: </label>
+        <input
+          type="text"
+          name="client_id"
+          placeholder="type your instagram app client id"
+          id="client_id"
+          value=""
+        />
+        <button id="authbutton" type="submit">Authorize account</button>
+      </form>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>
