@@ -1,51 +1,72 @@
 function main() {
-  const myURLParams = new URL(window.location.toString()).searchParams;
-  const code = myURLParams.get("code");
+  const code = getURLParam("code");
   const h1 = document.createElement("h1");
   const app = document.getElementById("app");
 
   if (code === null) {
+    app.innerHTML = "";
     h1.innerText = "could not get the code parameter";
-    appendToApp(h1);
-  } else {
-    h1.innerText = "Your code is: " + code;
-    appendToApp(h1);
-    document
-      .getElementById("requestbutton")
-      .addEventListener("click", async (event) => {
-        event.preventDefault();
+    return app.appendChild(h1);
+  }
+  h1.innerText = "Your code is: " + code;
+  app.appendChild(h1);
+  addEventListenerById("requestbutton", "click", async () => {
+    const elements = await getTokenOrErrorElements(code);
+    app.innerHTML = "";
+    app.append(elements);
+  });
+}
 
-        try {
-          const responseBody = await sendRequest(code);
-          const { access_token, user_id } = responseBody;
+function getURLParam(param) {
+  const myURLParams = new URL(window.location.toString()).searchParams;
+  return myURLParams.get(param);
+}
 
-          app.innerHTML = "";
+function addEventListenerById(id, event, callback) {
+  document.getElementById(id).addEventListener(event, (e) => {
+    e.preventDefault();
+    callback();
+  });
+}
 
-          const tokenElement = document.createElement("h2");
-          tokenElement.innerText = "Token " + access_token;
+async function getTokenOrErrorElements(code) {
+  const response = await getTokenOrError(code);
+  if (!response.error) {
+    const errorEl = document.createElement("h2");
+    errorEl.innerText = response.error.toString();
+    return [errorEl];
+  }
 
-          const idElement = document.createElement("h2");
-          idElement.innerText = "User ID " + user_id;
+  const tokenEl = document.createElement("h2");
+  tokenEl.innerText = `Token ${access_token}`;
 
-          app.append([tokenElement, idElement]);
-        } catch (err) {
-          const errorElement = document.createElement("h2");
-          errorElement.innerText = "Some error ocurred \n" + err;
+  const idEl = document.createElement("h2");
+  idEl.innerText = `User ID ${user_id}`;
 
-          errorElement.innerText = console.error(err);
-          appendToApp(errorElement);
-        }
-      });
+  return [tokenEl, idEl];
+}
+
+async function getTokenOrError(code) {
+  try {
+    const { access_token, user_id } = await sendRequest(code);
+    return {
+      access_token,
+      user_id,
+    };
+  } catch (error) {
+    return {
+      error,
+    };
   }
 }
 
-async function sendRequest(authCode) {
+async function sendRequest(code) {
   const body = new URLSearchParams({
     client_id: document.getElementById("client_id").value,
     client_secret: document.getElementById("client_secret").value,
     grant_type: "authorization_code",
     redirect_uri: "https://gabinpoa.github.io/dummyPage/static/index.html",
-    code: authCode,
+    code,
   });
   return await (
     await fetch("https://api.instagram.com/oauth/access_token", {
@@ -53,10 +74,6 @@ async function sendRequest(authCode) {
       body,
     })
   ).json();
-}
-
-function appendToApp(element) {
-  document.getElementById("app").appendChild(element);
 }
 
 main();
