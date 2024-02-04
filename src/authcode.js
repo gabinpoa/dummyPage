@@ -2,6 +2,7 @@ function main() {
   const myURLParams = new URL(window.location.toString()).searchParams;
   const code = myURLParams.get("code");
   const h1 = document.createElement("h1");
+  const app = document.getElementById("app");
 
   if (code === null) {
     h1.innerText = "could not get the code parameter";
@@ -14,52 +15,42 @@ function main() {
       .addEventListener("click", async (event) => {
         event.preventDefault();
 
-        const responseBody = await sendRequest(code);
-        const { access_token, user_id } = responseBody;
+        try {
+          const responseBody = await sendRequest(code);
+          const { access_token, user_id } = responseBody;
 
-        document.getElementById("app").innerHTML = "";
+          app.innerHTML = "";
 
-        if (access_token && user_id) {
           const tokenElement = document.createElement("h2");
           tokenElement.innerText = "Token " + access_token;
 
           const idElement = document.createElement("h2");
           idElement.innerText = "User ID " + user_id;
 
-          document.getElementById("app").append([tokenElement, idElement]);
-        } else if (responseBody.error_type) {
-          const errorTypeElement = document.createElement("h3");
-          errorTypeElement.innerText = responseBody.error_type;
-
+          app.append([tokenElement, idElement]);
+        } catch (err) {
           const errorElement = document.createElement("h2");
-          errorElement.innerText =
-            responseBody.code + " " + responseBody.error_message;
+          errorElement.innerText = "Some error ocurred \n" + err;
 
-          document
-            .getElementById("app")
-            .append([errorTypeElement, errorElement]);
-        } else {
-          console.error("nothing worked");
+          errorElement.innerText = console.error(err);
+          appendToApp(errorElement);
         }
       });
   }
 }
 
-async function sendRequest(code) {
-  const body = {
+async function sendRequest(authCode) {
+  const body = new URLSearchParams({
     client_id: document.getElementById("client_id").value,
     client_secret: document.getElementById("client_secret").value,
     grant_type: "authorization_code",
     redirect_uri: "https://gabinpoa.github.io/dummyPage/static/index.html",
-    code,
-  };
+    code: authCode,
+  });
   return await (
     await fetch("https://api.instagram.com/oauth/access_token", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+      body,
     })
   ).json();
 }
