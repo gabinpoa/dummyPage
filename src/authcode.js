@@ -44,7 +44,7 @@ async function sendRequest(authCode) {
     client_id: document.getElementById("client_id").value,
     client_secret: document.getElementById("client_secret").value,
     grant_type: "authorization_code",
-    redirect_uri: "https://gabinpoa.github.io/dummyPage/static/index.html",
+    redirect_uri: window.location.toString(),
     code: authCode,
   });
   return await (
